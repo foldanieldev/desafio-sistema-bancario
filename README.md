@@ -2,11 +2,6 @@
 
 ## Desenvolvido em ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
-
-<<<<<<< HEAD
-=======
-##########################################################################################################
->>>>>>> ca98fffe32f23580e92e2ef44674567908d4390a
   Autor: Daniel  
    
    Desafio: Criar um sistema bancário com as operações: sacar, depositar e visualizar extrato.
@@ -27,10 +22,5 @@
    Operação de extrato
        Essa operação deve listar todos os depósitos e saques realizados na conta. No fim da listagem deve ser exibido o saldo atual da conta.
        Os valores devem ser exibidos utilizando o formato R$ xxx.xx, exemplo 1500,45 = 1500,45#
-<<<<<<< HEAD
- 
-=======
- ###########################################################################################################
->>>>>>> ca98fffe32f23580e92e2ef44674567908d4390a
 
 ## No desafio foi utilizado variáveis local e global, uso também de funções, estrutura de condições e laço de repetições, para esse primeiro desafio.
