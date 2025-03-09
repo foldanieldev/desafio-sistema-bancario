@@ -1,102 +1,130 @@
+clientes = []
+contas = []
+extrato = []
+saldo = 0  
+num_saque = 0
+num_conta = 0
 
-saldo = 0
-extrato_deposito = []
-extrato_saque = []
-numero_deposito = 1
-numero_saque = 1
-LIMITE_DIARIO = 3
+AGENCIA = "0001"
 
-# Funõa para realizar depósito
-def fazer_deposito(valor):
-    global saldo
-    global extrato_deposito
-    global numero_deposito
+def menu():
+    menu = """
+        \n=============================\n
+        [D]\t - Depósito
+        [S]\t - Sacar
+        [E]\t - Extrato
+        [NU]\t - Novo cliente
+        [NC]\t - Nova conta
+        [Q]\t - Sair
 
-    print("########## Seu Depósito ##########\n")
-
-    if valor > 0:
-        if valor < 10:
-            print(f"Valor de R${valor:10.2f} insuficente, depósito minímo de 10,00 reais.")
-        else:
-            saldo += valor
-            extrato = f"Depósito de número {numero_deposito}: R${valor:10.2f}"
-            extrato_deposito.append(extrato)
-            numero_deposito = numero_deposito + 1
-            print(f"Depósito de R${valor:10.2f} efetuado com sucesso!")
-    else:
-        print("Valor inválido. ")
-    
-
-# Função para realizar o saque 
-def realiza_saque(valor):
-    global saldo
-    global extrato_saque
-    global numero_saque 
-    limite = 500
-    extrato = ""
-    LIMITE_DIARIO
-
-    print("########## Seu Saque ##########\n")
-
-    if numero_saque <= LIMITE_DIARIO:
-        print(f"Número de saques {numero_saque}")
-        if valor > saldo:
-            print("Saldo insuficiente!")
-        else:
-            if valor <= limite:
-                saldo -= valor
-                extrato = f"Saque de número {numero_saque}: R${valor:10.2f}"
-                numero_saque += 1
-                extrato_saque.append(extrato)
-            else:
-                print(f"Não é possível realizar o saque devido ao limite diário R${limite:10.2f}")
-    else:
-        print("Você atingiu o número de saque diario!")
-
-
-# Função para realizar apresentação do extrato.
-def mostrar_extrato(mostra_deposito, mostra_saque):
-    mostra_deposito_na_tela = mostra_deposito
-    mostra_saque_na_tela = mostra_saque
-
-    print("########## Seu Extrato ##########\n")
-
-    for lista in mostra_deposito_na_tela:
-        print(lista)
-
-    for lista in mostra_saque_na_tela:
-        print(lista)
-
-    print(f"Saldo atual: R${saldo:10.2f}")
-    
-
-menu = '''
-Banco do Estudante\n
-    [1] Depositar
-    [2] Saque
-    [3] Extrato
-    [0] Sair
-'''
-
-while True:
+        \n=============================\n
+    """
     print(menu)
 
-    opcao = int(input("Informe a opção desejada: "))
-
-    if opcao == 1:
-        print("########## Seu Depósito ##########\n")
-        valor_a_depositar = float(input("Valor a depositar: "))
-        fazer_deposito(valor_a_depositar)
-    elif opcao == 2:
-        print("########## Seu Saque ##########\n")
-        valor_sacar = float(input("Valor a ser sacado: "))
-        realiza_saque(valor_sacar)
-    elif opcao == 3:
-        print("########## Seu Extrato ##########\n")
-        mostrar_extrato(extrato_deposito, extrato_saque)
-    elif opcao == 0:
-        print("Obrigado por usar o nosso sistema bancário!")
-        break
+def operacao_deposito(saldo, valor_deposito, extrato, /):
+    if valor_deposito > 0:
+        if valor_deposito >= 10:
+            saldo += valor_deposito
+            extrato_deposito = f"Depósito de R${valor_deposito:10.2f}"
+            extrato.append(extrato_deposito)
+        else:
+            print("Valor minímo de R$ 10.")
     else:
-        print("Informe uma opção válida, tente novamente!")
+        print("Valor inexistente, digite um valor valído.")
+
+    return saldo, extrato
+
+def operacao_saque(*, saldo, valor_saque, extrato):
+    LIMITE_DIARIO = 3
+    SAQUE_MAX = 500
+    global num_saque
+    if valor_saque > saldo:
+        print("Saldo insuficiente.")
+    else:
+        if valor_saque <= SAQUE_MAX:
+            num_saque += 1
+            if num_saque <= LIMITE_DIARIO:
+                saldo -= valor_saque
+                extrato_saque = f"Saque de R${valor_saque:10.2f}"
+                extrato.append(extrato_saque)
+                print(f"numero de saque {num_saque}")
+            else:
+                print(f"Número de {LIMITE_DIARIO} saque diário atingido")   
+        else:
+            print(f"Limite diário é de R${SAQUE_MAX:10.2f}.")
+    
+       
+    return saldo, extrato
+
+def operacao_extrato(saldo,/, *, extrato_operacao):
+    for indice, dado_operacao in enumerate(extrato_operacao):
+        print(f"{indice +1} {dado_operacao}")
+
+    print(f"Seu saldo é {saldo:10.2f}")
+    # print(f"Seu extrato é {extrato_operacao}")
+
+def criar_cliente(clientes):
+    num_cpf = input("Insira o cpf: ")
+    
+    cliente = verifica_cliente(num_cpf, clientes)
+
+    if cliente:
+        print("Cliente já cadastrado.")
+        return
+    
+    nome_cliente = input("Digite o nome: ")
+    data_nasciento = input("Digite a data de nascimento: ")
+    endereco = input("Rua, n - bairro, cidade/UF: ")
+    clientes.append({"nome": nome_cliente, "data_nascimento": data_nasciento, "cpf": num_cpf, "endereco": endereco })
+
+def verifica_cliente(dado_cliente, clientes):
+    for lista in clientes:
+       if lista["cpf"] == dado_cliente:
+           cliente = lista["cpf"]
+           return cliente
+
+def criar_contas(agencia, num_conta, clientes):
+    num_cpf = input("Insira o cpf: ")
+
+    cliente = verifica_cliente(num_cpf, clientes)
+
+    if cliente:
+        print("Conta criada!")
+        return {"agencia": agencia, "numero_conta": num_conta, "cliente": cliente}
+    else:
+        print("Conta não existe")
+
+while True:
+     
+    menu()
+
+    opcao = input("Selecione a opção desejada: ")
+
+    if opcao.upper() == "Q":
+        print("Obrigador por ser nosso cliente.")
+        break
+
+    elif opcao.upper() == "D":
+        valor_deposito = float(input("Informe o valor a depositar: "))
+        saldo, extrato =operacao_deposito(saldo, valor_deposito, extrato)
+
+    elif opcao.upper() == "S":
+        valor_saque = float(input("Valor a sacar: "))
+        saldo, extrato = operacao_saque(saldo=saldo, valor_saque=valor_saque, extrato=extrato)
+
+    elif opcao.upper() == "E":
+       operacao_extrato(saldo, extrato_operacao=extrato)
+
+    elif opcao.upper() == "NU":
+        criar_cliente(clientes)
+
+    elif opcao.upper() == "NC":
+        conta = criar_contas(AGENCIA, num_conta, clientes)
+
+        if conta:
+            num_conta += 1
+            contas.append(conta)
+
+    else:
+        print("Opção inexistente, verifique as opções.")
 
